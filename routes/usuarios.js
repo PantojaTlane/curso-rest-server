@@ -3,7 +3,9 @@ const {check} = require('express-validator');
 const { usuariosGet, usuariosPut, usuariosPost, usuariosDelete, usuariosPatch } = require('../controllers/usuarios');
 
 const { estaRolEnDB, existeCorreoDB, existeUsuarioPorID, isNumerico } = require('../helpers/db-validators');
+const { esAdminRole, tieneRole } = require('../middlewares/validar-roles');
 const { validarCampos } = require('../middlewares/validar-campos');
+const { validarJWT } = require('../middlewares/validar-jwt');
 
 const router = Router();
 
@@ -31,6 +33,9 @@ router.post('/',[
 //request o response del tercer argumento, en este caso usuariosPosts para despues capturlos en el controlador
 
 router.delete('/:id',[
+    validarJWT,//Se puede eliminar siempre y cuando exista el token o el x-token header
+    //esAdminRole, //Este middleware fuerza a que el usuario tenga que ser administrador, lo bloquea
+    tieneRole('ADMIN_ROLE','VENTAS_ROLE'),//Este no lo bloquea aqui definimos quien tiene acceso
     check('id','No es un ID válido').isMongoId(),
     check('id').custom(existeUsuarioPorID),
     validarCampos

@@ -7,7 +7,10 @@ class Server{
     constructor(){
         this.app = express();
         this.port = process.env.PORT || 3000;
+        
+        
         this.usuariosPath = '/api/usuarios';//Declaramos un string donde estan las rutas, esto esta conectado con la funcion routes() como argumento
+        this.authPath = '/api/auth';
 
         //Conectar a base de datos
         this.conectarDB();
@@ -35,6 +38,7 @@ class Server{
     }
 
     routes(){
+        this.app.use(this.authPath, require('../routes/auth'));
         this.app.use(this.usuariosPath, require('../routes/usuarios'));//Middleware para conectar de tal manera con las rutas del archivo users.js
     }
 

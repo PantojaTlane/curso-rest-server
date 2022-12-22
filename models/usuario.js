@@ -47,7 +47,8 @@ const UsuarioSchema = Schema({//Definir la estructura de los datos
 });
 
 UsuarioSchema.methods.toJSON = function(){//Para quitar el password y _v
-    const {__v, password, ...usuario} = this.toObject();//Quitamos el __v y password pero mantenemos las demas propiedadse
+    const {__v, password, _id, ...usuario} = this.toObject();//Quitamos el __v y password pero mantenemos las demas propiedadse
+    usuario.uid = _id; //Cambiamos la propiedad _id por uid
     return usuario;
 };
 
