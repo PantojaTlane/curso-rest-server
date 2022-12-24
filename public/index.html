@@ -41,7 +41,7 @@
           id_token: response.credential,
         };
 
-        fetch("https://rest-server-node.herokuapp.com/api/auth/google", {
+        fetch("http://localhost:3000/api/auth/google", {
           method: "POST",
           headers: {
             "Content-type": "application/json",
