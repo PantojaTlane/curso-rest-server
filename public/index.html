@@ -4,9 +4,69 @@
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Acceso denegado</title>
+    <title>Google Signin</title>
   </head>
   <body>
-    <h1>Acceso denegado</h1>
+    <h1>Google Sign-in</h1>
+    <hr />
+
+    <div
+      id="g_id_onload"
+      data-client_id="888332889573-ba1c66teh1m4diknif4jr14c8p0alnko.apps.googleusercontent.com"
+      data-auto_prompt="false"
+      data-callback="handleCredentialResponse"
+    ></div>
+    <div
+      class="g_id_signin"
+      data-type="standard"
+      data-size="large"
+      data-theme="outline"
+      data-text="sign_in_with"
+      data-shape="rectangular"
+      data-logo_alignment="left"
+    ></div>
+
+    <!--Cerrar sesión-->
+    <button id="google_signout">Signout</button>
+
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
+
+    <script>
+      //La funcion que se llama cuando se autentica de forma exitosa
+
+      function handleCredentialResponse(response) {
+        //Google token o ID Token
+        //console.log("id token", response.credential);
+        const body = {
+          id_token: response.credential,
+        };
+
+        fetch("http://localhost:3000/api/auth/google", {
+          method: "POST",
+          headers: {
+            "Content-type": "application/json",
+          },
+          body: JSON.stringify(body),
+        })
+          .then((res) => res.json())
+          .then((res) => {
+            console.log(res);
+            localStorage.setItem("email", res.usuario.correo);
+          })
+          .catch(console.warn);
+      }
+
+      const button = document.getElementById("google_signout");
+
+      button.addEventListener("click", () => {
+        //Para cerrar sesion
+        console.log(google.accounts.id);
+        google.accounts.id.disableAutoSelect();
+        google.accounts.id.revoke(localStorage.getItem("email"), (done) => {
+          localStorage.clear();
+          location.reload();
+        });
+      });
+    </script>
   </body>
 </html>
