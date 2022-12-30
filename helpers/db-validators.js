@@ -1,5 +1,8 @@
 const Role =  require('../models/role');
 const Usuario = require('../models/usuario');
+const Categoria = require('../models/categoria');
+const Producto = require('../models/producto');
+const { response, request } = require('express');
 
 const estaRolEnDB = async (rol='') => {//Sera una validacion personalizada, recibe el valor mandado por post en req
     
@@ -47,9 +50,53 @@ const isNumerico = (req,res, next) => {
 
 };
 
+
+//Get de categorias
+const existeCategoria = async (id) => {
+    const categoria = await Categoria.findById(id);
+
+    if(!categoria || !categoria.estado){
+        throw new Error(`El id ${id} de categoria no existe`);
+    }
+};
+
+
+const evitarDuplicidad = async (req = request, res = response, next) => {
+
+    const {id} = req.params;
+    const nombre = req.body.nombre.toUpperCase();
+
+    //Obtener el id de la categoria que coincida con el nombre enviado
+    const categoriaFound = await Categoria.findOne({nombre});
+
+    if(categoriaFound){
+        (id !== categoriaFound._id.toString()) ? //Si es el id diferente, entonces ya existe
+            res.status(400).json({msg: 'Error, esa categoria ya existe, no duplicidad'})
+        : next();
+    }else{
+        next();
+    }
+
+}
+
+
+
+//Get de productos
+const existeProducto = async (id) => {
+    const producto = await Producto.findById(id);
+
+    if(!producto || !producto.estado){
+        throw new Error(`El id ${id} de producto no existe`);
+    }
+};
+
+
 module.exports = {
     estaRolEnDB,
     existeCorreoDB,
     existeUsuarioPorID,
-    isNumerico
+    isNumerico,
+    existeCategoria,
+    evitarDuplicidad,
+    existeProducto
 };

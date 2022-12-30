@@ -35,7 +35,7 @@ router.post('/',[
 router.delete('/:id',[
     validarJWT,//Se puede eliminar siempre y cuando exista el token o el x-token header
     //esAdminRole, //Este middleware fuerza a que el usuario tenga que ser administrador, lo bloquea
-    tieneRole('ADMIN_ROLE','VENTAS_ROLE'),//Este no lo bloquea aqui definimos quien tiene acceso
+    tieneRole('ADMIN_ROLE','VENTAS_ROLE'),//Este no lo bloquea aqui definimos quien tiene acceso 
     check('id','No es un ID válido').isMongoId(),
     check('id').custom(existeUsuarioPorID),
     validarCampos
