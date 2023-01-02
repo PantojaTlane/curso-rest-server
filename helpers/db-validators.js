@@ -91,6 +91,30 @@ const existeProducto = async (id) => {
 };
 
 
+
+
+//funcion personalizada de PUT de uploads
+const coleccionesPermitidas = (coleccion = '',colecciones=[]) => {
+    const incluida = colecciones.includes(coleccion);
+
+    if(!incluida){
+        throw new Error(`La coleccion ${coleccion} no es permitida, ${colecciones}`);
+    }
+
+    return true;
+};
+
+//Verificar que se haya enviado el archivo
+const archivoEnviado = (req = request, res = response, next) => {
+    if (!req.files || Object.keys(req.files).length === 0 || !req.files.archivo) {
+        res.status(400).json({msg: 'No hay archivos para subir'});
+        return;
+    } 
+
+    next();
+};
+
+
 module.exports = {
     estaRolEnDB,
     existeCorreoDB,
@@ -98,5 +122,7 @@ module.exports = {
     isNumerico,
     existeCategoria,
     evitarDuplicidad,
-    existeProducto
+    existeProducto,
+    coleccionesPermitidas,
+    archivoEnviado
 };
